@@ -1,89 +1,31 @@
-﻿public class Library
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.ConstrainedExecution;
+using System.Text;
+using System.Threading.Tasks;
+using csharp_biblioteca.Models;
+using csharp_biblioteca.Models.Documents;
+
+
+namespace csharp_biblioteca
 {
-
-}
-
-public class User
-{
-    public string Lastname { get; set; } = "";
-    public string Name { get; set; } = "";
-    public string Email { get; set; } = "";
-    public string Password { get; set; } = "";
-    public string Phonenumber { get; set; } = "";
-
-    public User (string lastname, string name, string email, string password, string phonenumber)
-    {
-        Lastname = lastname;
-        Name = name;
-        Email = email;
-        Password = password;
-        Phonenumber = phonenumber;
-    }
-}
-
-
-public class Document
-{
-    public string Id { get; set; } = "";
-    public string Year { get; set; } = "";
-    public string Sector { get; set; } = "";
-    public string Shelf { get; set; } = "";
-    public string Author { get; set; } = "";
-
-    public const string SectorHistory = "Storia";
-    public const string SectorMath = "Matematica";
-    public const string SectorEconomy = "Economia";
-
-    public Document(string id, string year, string sector, string shelf, string authorName, string authorSurname)
-    {
-        Id = id;
-        Year = year;
-        SetSector(sector);
-        Shelf = shelf;
-        Author = $"{authorName} {authorSurname}";
-    }
-
-    public void SetSector(string sector)
-    {
-        if (sector == SectorHistory || sector == SectorMath || sector == SectorEconomy)
-        {
-            Sector = sector;
-        }
-        else
-        {
-            throw new ArgumentException($"Settore non valido: {sector}");
-        }
-    }
-}
-
-public class Book : Document
-{
-    public int NumberOfPages { get; set; } 
     
-    public Book(string id, string year, string sector, string shelf, string authorName, string authorSurname, int numberOfPages) : base(id, year, sector, shelf, authorName, authorSurname)
+    public class Library
     {
-        this.NumberOfPages = numberOfPages;
-    }
+        readonly List<Document> documents = new();
+        readonly List<User> users = new();
+        readonly List<Loan> loans = new();
 
-    public override string ToString()
-    {
-        return base.ToString() + NewLine
-            + $"posti auto: {NumberOfPages}";
-    }
-}
+        public void AddDocument(Document document) => documents.Add(document);
+        public void AddUser(User user) => users.Add(user);
+        public void AddLoan(Loan loan) => loans.Add(loan);
 
-public class Dvd : Document
-{
-    public int Duration { get; set; }
 
-    public Dvd(string id, string year, string sector, string shelf, string authorName, string authorSurname, int duration) : base(id, year, sector, shelf, authorName, authorSurname)
-    {
-        this.Duration = duration;
-    }
+        public Document? SearchDocumentById(string id) => documents.FirstOrDefault(document => document.Id == id);
+        public IEnumerable<Document> SearchDocumentByTitle(string title) => documents.Where(document => document.Title == title);
 
-    public override string ToString()
-    {
-        return base.ToString() + NewLine
-            + $"posti auto: {Duration}";
+        public IEnumerable<Loan> SearchLoan(string nameUser, string lastNameUser) =>
+            loans.Where(loan => loan.User.Name == nameUser && loan.User.Lastname == lastNameUser);
     }
 }
